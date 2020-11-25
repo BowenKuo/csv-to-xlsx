@@ -31,8 +31,6 @@ docker run -it \
   sh
 # Now we're in the container
 cd /path/to/csv-to-xlsx/git
-# install required packages
-npm install
 # install package nexe
 npm install nexe -g
 # compile to binary file using nexe
