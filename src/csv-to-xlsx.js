@@ -51,7 +51,7 @@ if (module.parent) {
 
   program.parse(process.argv);
 
-  const csvPath = path.join(process.cwd(), program.inputDir);
+  const csvPath = program.inputDir;
 
   // check the csvPath
   if (!fs.existsSync(csvPath)) {
