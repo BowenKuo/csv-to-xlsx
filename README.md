@@ -24,8 +24,12 @@ Binaries are available for:
 Start a node container
 
 ```bash
-docker run -it --name build_csv2xlsx -v /path/to/csv-to-xlsx/git:/path/to/csv-to-xlsx/git node:12.16.2-alpine sh
-# Now in container
+docker run -it \
+  --name build_csv2xlsx \
+  -v /path/to/csv-to-xlsx/git:/path/to/csv-to-xlsx/git \
+  node:12.16.2-alpine \
+  sh
+# Now we're in the container
 cd /path/to/csv-to-xlsx/git
 # install required packages
 npm install
@@ -41,6 +45,10 @@ Download the executables from the `bin` folder.
 
 ```bash
 ./csv-to-xlsx -i "input-directory"
+# for example
+./csv-to-xlsx -i test && ls test
+# after running this line, transformed xlsx will 
+# be generated under the same folder 'test'
 ```
 
 ## License
