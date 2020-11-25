@@ -6,6 +6,23 @@
 const path = require('path');
 
 const fs = require('fs-extra');
+
+const getAllFiles = function(dirPath, arrayOfFiles) {
+  files = fs.readdirSync(dirPath)
+
+  arrayOfFiles = arrayOfFiles || []
+
+  files.forEach(function(file) {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+    } else {
+      arrayOfFiles.push(path.join(dirPath, "/", file))
+    }
+  })
+
+  return arrayOfFiles
+}
+
 const program = require('commander');
 
 const convertCsvToXlsx = require('./convertCsvToXlsx');
@@ -24,7 +41,6 @@ if (module.parent) {
   program
     .version(pkg.version, '-v, --version')
     .option('-i, --input-dir [dir]', 'Input directory that has the CSV files', 'csv')
-    .option('-o, --output-dir [dir]', 'Output directory for the XLSX files', 'xlsx');
 
   program.on('--help', function () {
     console.log(``);
@@ -36,7 +52,6 @@ if (module.parent) {
   program.parse(process.argv);
 
   const csvPath = path.join(process.cwd(), program.inputDir);
-  const xlsxPath = path.join(process.cwd(), program.outputDir);
 
   // check the csvPath
   if (!fs.existsSync(csvPath)) {
@@ -45,17 +60,9 @@ if (module.parent) {
     process.exitCode = 1;
     program.help(); // exit immediately
   }
-
-  // check the xlsxPath
-  if (!fs.existsSync(xlsxPath)) {
-    // create xlsx folder
-    console.info(`Creating output directory: ${xlsxPath}`);
-    fs.mkdirpSync(xlsxPath);
-  }
-
-  // read csvPath
-  const csvFiles = fs.readdirSync(csvPath);
-
+  
+  const csvFiles = getAllFiles(csvPath);
+  
   for (const file of csvFiles) {
     // parse file
     const fileObject = path.parse(file);
@@ -66,7 +73,7 @@ if (module.parent) {
     console.info(`Converting: ${fileObject.name}`);
     // convert
     try {
-      convertCsvToXlsx(path.join(csvPath, file), path.join(xlsxPath, `${fileObject.name}.xlsx`));
+      convertCsvToXlsx(file, path.join(fileObject.dir, `${fileObject.name}.xlsx`));
     } catch (e) {
       console.info(`${e.toString()}`);
     }
