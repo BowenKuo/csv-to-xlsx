@@ -70,6 +70,7 @@ if (module.parent) {
     if (fileObject.ext !== '.csv') {
       continue;
     }
+    console.info(`Converting: ${fileObject.name}`);
     // convert
     try {
       convertCsvToXlsx(file, path.join(fileObject.dir, `${fileObject.name}.xlsx`));
